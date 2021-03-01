@@ -61,8 +61,10 @@
         methods: {
             handleSignIn() {
                 const _this = this
-                axios.post('http://192.168.1.136:8888/unverify', _this.loginForm).then( function(response) {
+                axios.post('http://192.168.1.136:8888/unverify', _this.signinForm).then( function(response) {
                     _this.msg = response
+                    alert("注册已经提交，请等待审核")
+                
                 })
             },
             handleReturn() {

@@ -2,25 +2,16 @@
     <div class="htmleaf-container">
         <div class="wrapper">
             <div class="container">
-                <h1>管理员页面</h1>
-                <br/>
-                <br/>
-                <form class="form">
-                    <div>
-                        <button type="button" @click="authorizeUser">授权用户</button>
-                    </div>
-                    <br/>
-                    <br/>
-                    <div>
-                        <button type="button" @click="updateUser">修改用户权限</button>
-                    </div>
-                    <br/>
-                    <br/>
-                    <div>
-                        <button type="button" @click="handlereturn">返回主页</button>
-                    </div>
-                </form>
+                <h1>管理员登录页面</h1>
 
+                <form class="form" :model="loginForm" ref="loginForm">
+                    <input type="text" placeholder="请输入电话号码" v-model="loginForm.username">
+                    <input type="password" placeholder="请输入密码" v-model="loginForm.password">
+                    <button type="button" @click="handleLogin">登录</button>
+                    <span>{{"  "}}</span>
+                    <button type="button" @click="handleReturn">返回</button>
+                    <div>{{msg}}</div>
+                </form>
             </div>
 
             <ul class="bg-bubbles">
@@ -41,21 +32,33 @@
 
 <script>
     export default {
-        name: "Admin",
         data() {
             return {
                 msg : '',
-
+                loginForm: {
+                    username: '',
+                    password: ''
+                }
             }
         },
         methods: {
-            authorizeUser() {
-                this.$router.push("/unverify")
+            handleLogin() {
+                const _this = this
+                _this.loginData = {
+                    username:'',
+                    password: ''
+                }
+                _this.loginData.username = _this.loginForm.username
+                _this.loginData.password = this.$md5(_this.loginForm.password)
+                axios.post('http://192.168.1.49:8888/admin/login', _this.loginData).then( function(response) {
+                    if(response.data === "登录成功") {
+                        _this.$router.push("/admin")
+                    } else {
+                        alert(response.data)
+                    }
+                })
             },
-            updateUser() {
-                this.$router.push("/verify")
-            },
-            handlereturn() {
+            handleReturn() {
                 this.$router.push("/")
             }
         }

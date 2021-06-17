@@ -1,348 +1,194 @@
 <template>
-    <div class="htmleaf-container">
-        <div class="wrapper">
-            <div class="container">
-                <h1>未授权的用户申请</h1>
-                <br/>
-                <br/>
-                <form class="form">
-                    <button type="button" @click="handleReqUnVerifyUser">获取未授权用户列表</button>
-                    <sapn>{{" "}}</sapn>
-                    <button type="button" @click="handleReturn">返回主页面</button>
-<!--                    <div>{{data}}</div>-->
-<!--                    <div>{{users}}</div>-->
-                </form>
-            </div>
+  <div>
+    <h1>待审核用户列表</h1>
+    <el-card class="login-form-layout" align="middle" >
+    <el-table
+        :data="users.slice((currentPage-1)*pageSize, currentPage*pageSize)"
+        style="width: 800px">
+      <el-table-column
+          fixed
+          prop="username"
+          label="用户名"
+          width="140">
+      </el-table-column>
+      <el-table-column
+          fixed
+          prop="phone"
+          label="电话"
+          width="140">
+      </el-table-column>
+      <el-table-column
+          prop="department"
+          label="所属部门"
+          width="140">
+      </el-table-column>
+      <el-table-column
+          prop="type"
+          label="用户类型"
+          width="140">
+      </el-table-column>
+      <el-table-column
+          prop="time"
+          label="使用时段"
+          width="140">
+      </el-table-column>
 
-            <div>
-                <el-form style="width: auto" >
-                    <el-table
-                            :data="users"
-                            style="width: 100%">
-                        <el-table-column
-                                label="用户"
-                                width="180">
-                            <template slot-scope="scope">
-                                <i class="el-icon-time"></i>
-                                <span style="margin-left: 10px">{{ scope.row.username }}</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column
-                                label="部门"
-                                width="180">
-                            <template slot-scope="scope">
-                                <i class="el-icon-time"></i>
-                                <span style="margin-left: 10px">{{ scope.row.department }}</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column
-                                label="用户类型"
-                                width="180">
-                            <template slot-scope="scope">
-                                <i class="el-icon-time"></i>
-                                <span style="margin-left: 10px">{{ scope.row.type}}</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column
-                                label="时间"
-                                width="180">
-                            <template slot-scope="scope">
-                                <i class="el-icon-time"></i>
-                                <span style="margin-left: 10px">{{ scope.row.time}}</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column
-                                label="用户IP"
-                                width="180">
-                            <template slot-scope="scope">
-                                <i class="el-icon-time"></i>
-                                <span style="margin-left: 10px">{{ scope.row.ip}}</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="操作">
-                            <template slot-scope="scope">
-                                <el-button
-                                        size="mini"
-                                        type="danger"
-                                        @click="handleDelete(scope.$index, scope.row)">授权</el-button>
-                            </template>
-                        </el-table-column>
-                    </el-table>
-                </el-form>
-            </div>
-        </div>
+      <el-table-column
+          prop="ip"
+          label="IP地址"
+          width="140">
+      </el-table-column>
+      <el-table-column
+          fixed="right"
+          label="操作"
+          width="80">
+        <template slot-scope="scope">
+          <el-button  type="danger"  style="width: 50px;height: 25px" @click="handleVerify(scope.$index, scope.row)">授权</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <div class="container">
+      <form class="form">
+        <el-button type="primary"  style="width: 200px;margin-top: 20px " @click="handleReqUnVerifyUser">获取未授权用户列表</el-button>
+        <sapn>{{" "}}</sapn>
+        <el-button type="primary" style="width: 200px" @click="handleReturn">返回主页面</el-button>
+      </form>
     </div>
+
+    <div >
+      <el-pagination
+          background
+          @current-change="handleCurrentChange"
+          layout="total, prev, pager, next"
+          :page-size="pageSize"
+          :total="totalCount"
+          :current-page="currentPage" >
+      </el-pagination>
+    </div>
+    </el-card>
+  </div>
 </template>
 
 <script>
-    export default {
-        name: "UnVerify",
-        data() {
-            return {
-                users : '',
-                deleteUser: {
-                    username: '',
-                    password: ''
-                }
-            }
-        },
-        methods: {
-            handleReqUnVerifyUser() {
-                const _this = this
-                axios.get('http://192.168.1.202:8888/unverify').then( function(response) {
-                    console.log(response)
-                    _this.users = response.data._embedded.userUnVerifies
-                })
-            },
-            handleDelete(index, row) {
-                const _this = this
-                console.log(index, row);
-                _this.deleteUser.username = row.username;
-                _this.deleteUser.password = row.password;
-                _this.users.splice(index, 1);
-                axios.post('http://192.168.1.202:8888/user/deleteUnVerifyUser', _this.deleteUser).then( function(response) {
-                    console.log("从未授权库中删除")
-            });
-                axios.post('http://192.168.1.202:8888/verify', row).then( function(response) {
-                    console.log("授权成功")
-                });
+import axios from 'axios'
 
-            },
-            handleReturn() {
-                this.$router.push("/")
-            }
-        }
+export default {
+  name: 'BookManage',
+  data() {
+    return {
+      pageSize:14,
+      totalCount:0,
+      currentPage:1,
+      users : '',
+      deleteUser: {
+        phone: '',
+        password: ''
+      }
     }
+  },
+  methods: {
+    handleCurrentChange(val){
+      this.currentPage = val;
+    },
+    handleReqUnVerifyUser() {
+      const _this = this
+      axios.get('http://'+ this.GLOBAL.backendIp + '/user/reqUnVerifyUser').then( function(response) {
+        console.log(response)
+        _this.totalCount = response.data.length
+        _this.users = response.data
+        _this.$message({
+          showClose:true,
+          message:'获取成功',
+          type:"success"
+        })
+      })
+    },
+    handleVerify(index, row) {
+      const _this = this
+      console.log(index, row);
+      _this.deleteUser.phone = row.phone;
+      _this.deleteUser.password = row.password;
+      _this.users.splice(index, 1);
+      axios.post('http://'+ this.GLOBAL.backendIp + '/user/deleteUnVerifyUser', _this.deleteUser).then( function(response) {
+        console.log("从未授权库中删除")
+      });
+      axios.post('http://'+ this.GLOBAL.backendIp + '/verify', row).then( function(response) {
+        console.log("授权成功")
+        _this.$message({
+          showClose:true,
+          message:"授权成功",
+          type:"success"
+        })
+      });
+
+    },
+    handleReturn() {
+      this.$router.push("/")
+    }
+  }
+}
 </script>
 
-<style rel="stylesheet">
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        font-weight: 300;
-    }
-    body {
-        font-family: "Source Sans Pro", sans-serif;
-        color: white;
-        font-weight: 300;
-    }
-    body ::-webkit-input-placeholder {
-        /* WebKit browsers */
-        font-family: "Source Sans Pro", sans-serif;
-        color: white;
-        font-weight: 300;
-    }
-    body :-moz-placeholder {
-        /* Mozilla Firefox 4 to 18 */
-        font-family: "Source Sans Pro", sans-serif;
-        color: white;
-        opacity: 1;
-        font-weight: 300;
-    }
-    body ::-moz-placeholder {
-        /* Mozilla Firefox 19+ */
-        font-family: "Source Sans Pro", sans-serif;
-        color: white;
-        opacity: 1;
-        font-weight: 300;
-    }
-    body :-ms-input-placeholder {
-        /* Internet Explorer 10+ */
-        font-family: "Source Sans Pro", sans-serif;
-        color: white;
-        font-weight: 300;
-    }
-    .wrapper {
-        background: #50a3a2;
-        background: -webkit-linear-gradient(top left, #50a3a2 0%, #53e3a6 100%);
-        background: linear-gradient(to bottom right, #50a3a2 0%, #53e3a6 100%);
-        opacity: 0.8;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-    }
-    .wrapper.form-success .container h1 {
-        -webkit-transform: translateY(85px);
-        -ms-transform: translateY(85px);
-        transform: translateY(85px);
-    }
-    .container {
-        max-width: 600px;
-        margin: 0 auto;
-        margin-top: 150px;
-        padding: 80px 0;
-        height: 400px;
-        text-align: center;
-    }
-    .container h1 {
-        font-size: 40px;
-        -webkit-transition-duration: 1s;
-        transition-duration: 1s;
-        -webkit-transition-timing-function: ease-in-put;
-        transition-timing-function: ease-in-put;
-        font-weight: 200;
-    }
-    form {
-        padding: 20px 0;
-        position: relative;
-        z-index: 2;
-    }
-    form input {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        outline: 0;
-        border: 1px solid rgba(255, 255, 255, 0.4);
-        background-color: rgba(255, 255, 255, 0.2);
-        width: 250px;
-        border-radius: 3px;
-        padding: 10px 15px;
-        margin: 0 auto 10px auto;
-        display: block;
-        text-align: center;
-        font-size: 18px;
-        color: white;
-        -webkit-transition-duration: 0.25s;
-        transition-duration: 0.25s;
-        font-weight: 300;
-    }
-    form input:hover {
-        background-color: rgba(255, 255, 255, 0.4);
-    }
-    form input:focus {
-        background-color: white;
-        width: 300px;
-        color: #53e3a6;
-    }
-    form button {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        outline: 0;
-        background-color: white;
-        border: 0;
-        padding: 10px 15px;
-        color: #53e3a6;
-        border-radius: 3px;
-        width: 250px;
-        cursor: pointer;
-        font-size: 18px;
-        -webkit-transition-duration: 0.25s;
-        transition-duration: 0.25s;
-    }
-    form button:hover {
-        background-color: #f5f7f9;
-    }
-    .bg-bubbles {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-    }
-    .bg-bubbles li {
-        position: absolute;
-        list-style: none;
-        display: block;
-        width: 40px;
-        height: 40px;
-        background-color: rgba(255, 255, 255, 0.15);
-        bottom: -160px;
-        -webkit-animation: square 25s infinite;
-        animation: square 25s infinite;
-        -webkit-transition-timing-function: linear;
-        transition-timing-function: linear;
-    }
-    .bg-bubbles li:nth-child(1) {
-        left: 10%;
-    }
-    .bg-bubbles li:nth-child(2) {
-        left: 20%;
-        width: 80px;
-        height: 80px;
-        -webkit-animation-delay: 2s;
-        animation-delay: 2s;
-        -webkit-animation-duration: 17s;
-        animation-duration: 17s;
-    }
-    .bg-bubbles li:nth-child(3) {
-        left: 25%;
-        -webkit-animation-delay: 4s;
-        animation-delay: 4s;
-    }
-    .bg-bubbles li:nth-child(4) {
-        left: 40%;
-        width: 60px;
-        height: 60px;
-        -webkit-animation-duration: 22s;
-        animation-duration: 22s;
-        background-color: rgba(255, 255, 255, 0.25);
-    }
-    .bg-bubbles li:nth-child(5) {
-        left: 70%;
-    }
-    .bg-bubbles li:nth-child(6) {
-        left: 80%;
-        width: 120px;
-        height: 120px;
-        -webkit-animation-delay: 3s;
-        animation-delay: 3s;
-        background-color: rgba(255, 255, 255, 0.2);
-    }
-    .bg-bubbles li:nth-child(7) {
-        left: 32%;
-        width: 160px;
-        height: 160px;
-        -webkit-animation-delay: 7s;
-        animation-delay: 7s;
-    }
-    .bg-bubbles li:nth-child(8) {
-        left: 55%;
-        width: 20px;
-        height: 20px;
-        -webkit-animation-delay: 15s;
-        animation-delay: 15s;
-        -webkit-animation-duration: 40s;
-        animation-duration: 40s;
-    }
-    .bg-bubbles li:nth-child(9) {
-        left: 25%;
-        width: 10px;
-        height: 10px;
-        -webkit-animation-delay: 2s;
-        animation-delay: 2s;
-        -webkit-animation-duration: 40s;
-        animation-duration: 40s;
-        background-color: rgba(255, 255, 255, 0.3);
-    }
-    .bg-bubbles li:nth-child(10) {
-        left: 90%;
-        width: 160px;
-        height: 160px;
-        -webkit-animation-delay: 11s;
-        animation-delay: 11s;
-    }
-    @-webkit-keyframes square {
-        0% {
-            -webkit-transform: translateY(0);
-            transform: translateY(0);
-        }
-        100% {
-            -webkit-transform: translateY(-700px) rotate(600deg);
-            transform: translateY(-700px) rotate(600deg);
-        }
-    }
-    @keyframes square {
-        0% {
-            -webkit-transform: translateY(0);
-            transform: translateY(0);
-        }
-        100% {
-            -webkit-transform: translateY(-700px) rotate(600deg);
-            transform: translateY(-700px) rotate(600deg);
-        }
-    }
+<style scoped>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-weight: 300;
+}
+body {
+  font-family: "Source Sans Pro", sans-serif;
+  color: white;
+  font-weight: 300;
+}
+form {
+  padding: 20px 0;
+  position: relative;
+  z-index: 2;
+}
+form input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: 0;
+  border: 1px solid #C0C4CC;
+  background-color: rgba(255, 255, 255, 0.2);
+  width: 250px;
+  border-radius: 3px;
+  padding: 10px 15px;
+  margin: 0 auto 10px auto;
+  display: block;
+  text-align: center;
+  font-size: 15px;
+  color: grey;
+  -webkit-transition-duration: 0.25s;
+  transition-duration: 0.25s;
+  font-weight: 300;
+}form input:hover {
+   background-color: rgba(255, 255, 255, 0.4);
+ }
+form input:focus {
+  background-color: white;
+  width: 300px;
+  color: #409EFF;
+  border: 1px solid #409EFF;
+}
+.form button {
+  outline: 0;
+  border: 0;
+  padding: 10px 15px;
+  border-radius: 3px;
+  width: 250px;
+  cursor: pointer;
+  font-size: 14px;
+  -webkit-transition-duration: 0.25s;
+  transition-duration: 0.25s;
+}
+.login-form-layout {
+  background-color: transparent;
+  position: absolute;
+  left: 600px;
+  width:1000px;
+  border-top: 20px solid #409EFF;
+}
 </style>

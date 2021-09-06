@@ -17,7 +17,7 @@
                     <br/>
                     <br/>
                     <div>
-                        <button type="button" @click="handlereturn">返回</button>
+                        <button type="button" @click="handlereturn">返回主页</button>
                     </div>
                 </form>
 

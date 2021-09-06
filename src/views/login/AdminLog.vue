@@ -54,12 +54,23 @@ import axios from 'axios'
                     password: ''
                 }
                 _this.loginData.username = _this.loginForm.username
-                _this.loginData.password = this.$md5(_this.loginForm.password)
+                // _this.loginData.password = this.$md5(_this.loginForm.password)
+                 _this.loginData.password = _this.loginForm.password
                 axios.post('http://' + this.GLOBAL.backendIp + '/admin/login', _this.loginData).then( function(response) {
-                    if(response.data === "登录成功") {
-                        _this.$router.push("/admin")
+                         let message = response.data;
+                    if(response.data.code === 2001) {
+                        // _this.$message({
+                        //   showClose:true,
+                        //   message:"登录成功",
+                        //   type:'success'
+                        // })
+                    _this.$router.push("/admin")
                     } else {
-                        alert(response.data)
+                        _this.$message({
+                          showClose:true,
+                          message:message,
+                          type:'error'
+                        })
                     }
                 })
             },

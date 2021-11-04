@@ -9,6 +9,7 @@
                 <form class="form" :model="loginForm" ref="loginForm" >
                     <input type="text" placeholder="请输入电话号码" v-model="loginForm.username">
                     <input type="password" placeholder="请输入密码" v-model="loginForm.password">
+                    <el-checkbox v-model="checked" class="myRedCheckBox">使用安全路由</el-checkbox>
                     <button type="button"  @click="handleLogin">登录</button>
                     <span>{{"  "}}</span>
                   <br/>
@@ -43,7 +44,8 @@ import axios from 'axios'
                 loginForm: {
                     username: '',
                     password: ''
-                }
+                },
+                checked: false,
             }
         },
         methods: {
@@ -51,10 +53,12 @@ import axios from 'axios'
                 const _this = this
                 _this.loginData = {
                     username:'',
-                    password: ''
+                    password: '',
+                    safeRoute: '',
                 }
                 _this.loginData.username = _this.loginForm.username
                 _this.loginData.password = this.$md5(_this.loginForm.password)
+                _this.loginData.safeRoute = this.checked
                 axios.post('http://' + this.GLOBAL.backendIp +'/user/login', _this.loginData).then( function(response) {
                   let message = response.data;
                     if(response.data.code === 2001) {
@@ -84,7 +88,7 @@ import axios from 'axios'
     }
 </script>
 
-<style scoped>
+<style>
     * {
         box-sizing: border-box;
         margin: 0;
@@ -167,4 +171,29 @@ import axios from 'axios'
     form button:hover {
         background-color: #f5f7f9;
     }
+    
+    .myRedCheckBox.is-bordered.is-checked {
+  border-color: #FF0000;
+}
+
+/* 设置选中后的文字颜色 */
+.myRedCheckBox .el-checkbox__input.is-checked+.el-checkbox__label {
+  color: #FF0000;
+}
+
+/* 设置选中后对勾框的边框和背景颜色 */
+.myRedCheckBox .el-checkbox__input.is-checked .el-checkbox__inner, .myRedCheckBox .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+  border-color: #FF0000;
+  background-color:#FF0000;
+}
+
+/* 设置checkbox获得焦点后，对勾框的边框颜色 */
+.myRedCheckBox .el-checkbox__input.is-focus .el-checkbox__inner{
+  border-color: #FF0000;
+}
+
+/* 设置鼠标经过对勾框，对勾框边框的颜色 */
+.myRedCheckBox .el-checkbox__inner:hover{
+  border-color: #FF0000;
+}
 </style>

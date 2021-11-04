@@ -43,7 +43,8 @@ import axios from 'axios'
                 loginForm: {
                     username: '',
                     password: ''
-                }
+                },
+                checked: true,
             }
         },
         methods: {

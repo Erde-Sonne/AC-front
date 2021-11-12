@@ -9,7 +9,7 @@
                 <form class="form" :model="loginForm" ref="loginForm" >
                     <input type="text" placeholder="请输入电话号码" v-model="loginForm.username">
                     <input type="password" placeholder="请输入密码" v-model="loginForm.password">
-                    <el-checkbox v-model="checked" class="myRedCheckBox">使用安全路由</el-checkbox>
+                    <!-- <el-checkbox v-model="checked" class="myRedCheckBox">使用安全路由</el-checkbox> -->
                     <button type="button"  @click="handleLogin">登录</button>
                     <span>{{"  "}}</span>
                   <br/>

@@ -27,17 +27,17 @@
           label="用户类型"
           width="140">
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
           prop="time"
           label="使用时段"
           width="140">
-      </el-table-column>
-
+      </el-table-column> -->
+<!-- 
       <el-table-column
           prop="ip"
           label="IP地址"
           width="140">
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
           fixed="right"
           label="操作"

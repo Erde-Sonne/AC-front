@@ -28,16 +28,16 @@
             label="用户类型"
             width="140">
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
             prop="time"
             label="使用时段"
             width="140">
-        </el-table-column>
-        <el-table-column
+        </el-table-column> -->
+        <!-- <el-table-column
             prop="ip"
             label="IP地址"
             width="140">
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
             fixed="right"
             label="操作"
@@ -65,12 +65,12 @@
           <el-form-item>
             <p>安全级别</p><input type="text" placeholder="请输入安全级别" v-model="safe">
           </el-form-item>
-          <el-form-item>
+          <!-- <el-form-item>
             <p>访问时间</p><input type="text" placeholder="请输入访问时间" v-model="time">
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item><p>MAC</p><input type="text" placeholder="请输入MAC地址" v-model="mac"></el-form-item>
           <el-form-item><p>入口交换机</p><input type="text" placeholder="请输入交换机" v-model="switcher"></el-form-item>
-          <el-form-item><p>接入端口</p><input type="text" placeholder="请输入端口" v-model="port"></el-form-item>
+          <!-- <el-form-item><p>接入端口</p><input type="text" placeholder="请输入端口" v-model="port"></el-form-item> -->
         </el-form>
 
         <div slot="footer" class="dialog-footer">

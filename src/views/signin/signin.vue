@@ -12,11 +12,11 @@
                     <input type="text" placeholder="请输入类型" v-model="signinForm.type">
                     <input type="text" placeholder="请输入设备" v-model="signinForm.device">
                     <input type="text" placeholder="安全级别(0-9)" v-model="signinForm.safe">
-                    <input type="text" placeholder="访问时间(00:00-24:00)" v-model="signinForm.time">
-                    <input type="text" placeholder="请输入IP地址" v-model="signinForm.ip">
+                    <!-- <input type="text" placeholder="访问时间(00:00-24:00)" v-model="signinForm.time"> -->
+                    <!-- <input type="text" placeholder="请输入IP地址" v-model="signinForm.ip"> -->
                     <input type="text" placeholder="请输入MAC地址" v-model="signinForm.mac">
                     <input type="text" placeholder="请输入交换机" v-model="signinForm.switcher">
-                    <input type="text" placeholder="请输入端口" v-model="signinForm.port">
+                    <!-- <input type="text" placeholder="请输入端口" v-model="signinForm.port"> -->
                     <button type="button" @click="handleSignIn">注册</button>
                     <span>{{"  "}}</span>
                     <button type="button" @click="handleReturn">返回</button>
